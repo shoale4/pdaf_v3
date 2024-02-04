@@ -1,0 +1,6 @@
+/outputs/
+/results/
+/txt_file_data/
+*.o
+*.txt
+*.mod
