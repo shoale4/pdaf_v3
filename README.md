@@ -10,7 +10,7 @@ To download and run:
 5. Create an `/outputs` folder, a `/results` folder, and a `/txt_file_data` folder within it.
 6. In the `/txt_file_data` folder, add a `/ens_obs` folder.
 7. Open `prepoststep_ens_pdaf.F90` and find lines 332 and 351 (variable name `filename`). Change `'results/for_elizabeth/jan_2024/rmserror_'` to just `'results/rmserror_'`  and `'results/for_elizabeth/jan_2024/spread_'` to just `'results/spread_'`.
-8. Open the `build_and_run_macos.sh` file.
+8. Open the `bash_scripts/build_and_run_macos.sh` file.
 9. In lines 6 & 7 and lines 27 & 28, change `makefilepath` to the path that your PDAF header file is located (should be something similar to what I have there).
 10. Now, the code is ready to run. To modify values for experimentation (more options will be added soon, such as changing parameter sets for the model),
    you can edit:
@@ -24,11 +24,8 @@ To download and run:
                 - `-filter_type`: filter type (e.g. "estkf", "etkf", etc.)
                 - `-obs_type`: observation type (e.g. uniformly distributed observations every 8th grid point - e.g. "uniform8")
               set the filter (`-filt_type`, see `init_pdaf.F90` for more info).
-11. Set `fout_choice` to 0 for netCDF file I/O or 1 for txt file I/O. This tells the system to use txt files.
-12. Find the header file for which you specified the file path for in step 9. In the last line,
-     set `FILEOUT_FLAG` to 0 for netCDF file I/O or 1 for txt file I/O.  This tells PDAF to use txt files. 
-13. In your terminal, run `chmod +x build_and_run_macos.sh` and then `./build_and_run_macos.sh`.
-14. Congrats, you've run PDAF!
+12. In your terminal, run `chmod +x build_and_run_macos.sh` and then `./build_and_run_macos.sh`.
+13. Congrats, you've run PDAF!
 
 
 
