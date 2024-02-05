@@ -35,6 +35,7 @@ SUBROUTINE integrate_pdaf()
 ! *** local variables ***
   INTEGER :: step, k, count, i, j      ! Counters
   character(len=5) :: filename
+  character(len=6) :: fo_flag
 !   CHARACTER(len=5) :: stepstr  ! String for time step
 
 ! #ifdef USE_PDAF
@@ -123,6 +124,23 @@ SUBROUTINE integrate_pdaf()
 		v = v + dt*dv + xlap
 		h = h + dt*dh
 
+		if (step .lt. 10) then
+			fo_flag = '(I5.1)'
+			! allocate(filename(len=1))
+		elseif (step .ge. 10 .and. step .lt. 100) then
+			fo_flag = '(I5.2)'
+			! allocate(filename(2))
+		elseif (step .ge. 100 .and. step .lt. 1000) then
+			fo_flag = '(I5.3)'
+			! allocate(filename(3))
+		elseif (step .ge. 1000 .and. step .lt. 10000) then
+			fo_flag = '(I5.4)'
+			! allocate(filename(4))
+		else
+			fo_flag = '(I5.5)'
+			! allocate(filename(5))
+		endif
+
 #ifndef USE_PDAF
 		if (spinup_phase .eq. 0) then
 			if (step == spinup_time) then
@@ -148,9 +166,9 @@ SUBROUTINE integrate_pdaf()
 			if (mod(step, 5) == 0) then
 				if (file_output_choice .eq. 1) then
 					write (*,*) "writing state @ time step: ", step 
-					write(filename, '(I0)') step
+					write(filename, fo_flag) step
 					! write (*,*) filename
-					call write_txt(nx*nx, reshape(v, (/nx*nx/)), trim(adjustl(filename)))
+					call write_txt(nx*nx, reshape(v, (/nx*nx/)), adjustl(filename))
 				end if
 			end if
 		end if 

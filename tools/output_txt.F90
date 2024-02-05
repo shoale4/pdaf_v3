@@ -24,7 +24,8 @@ module output_txt
 			integer :: i, j
 			integer :: nx
 
-			print *, 'I/O File Option selected: TXT'
+			! print *, 'I/O File Option selected: TXT'
+
 
 
 			OPEN (11, file='../txt_file_data/ens_obs/'//trim(filename), form='unformatted',  access='stream', action='write')

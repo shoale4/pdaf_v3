@@ -24,9 +24,9 @@ program generate_obs_txt
 	integer :: iseed(4)   ! for random number generation
 	real(8), allocatable :: obs_copy(:,:)
 	character(len=32) :: handle  ! new sb 1/9/24 -- for command line parsing, finally adding it!
-	character(len=16) :: filename
+	character(len=5) :: filename
 	integer :: x, y, iter
-
+	character(len=6) :: fo_flag
 
 	dim = nx*nx
 	allocate(state(dim))
@@ -107,7 +107,24 @@ program generate_obs_txt
 
 
 		! write observations
-		call write_txt(nx*nx, reshape(observations, (/nx*nx/)), 'obs_'//TRIM(filename))
+		if (step .lt. 10) then
+			fo_flag = '(I5.1)'
+			! allocate(filename(len=1))
+		elseif (step .ge. 10 .and. step .lt. 100) then
+			fo_flag = '(I5.2)'
+			! allocate(filename(2))
+		elseif (step .ge. 100 .and. step .lt. 1000) then
+			fo_flag = '(I5.3)'
+			! allocate(filename(3))
+		elseif (step .ge. 1000 .and. step .lt. 10000) then
+			fo_flag = '(I5.4)'
+			! allocate(filename(4))
+		else
+			fo_flag = '(I5.5)'
+			! allocate(filename(5))
+		endif
+		write(filename, fo_flag) step
+		call write_txt(nx*nx, reshape(observations, (/nx*nx/)), 'obs_'//TRIM(adjustl(filename)))
 
         ! print *, observations
 

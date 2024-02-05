@@ -12,6 +12,7 @@ export fout_choice=1
 if grep -q "\-DUSE_PDAF" $makefilepath; then
 	sed -i 's/^CPP_DEFS = -DUSE_PDAF/CPP_DEFS = #-DUSE_PDAF/' $makefilepath
 fi
+cd ..
 make clean
 make model
 ./model -spinup 0 -fout_choice $(fout_choice)
