@@ -37,6 +37,7 @@ SUBROUTINE integrate_pdaf()
   character(len=5) :: filename
   character(len=6) :: fo_flag
 !   CHARACTER(len=5) :: stepstr  ! String for time step
+	character(len=32) :: init_fstr
 
 ! #ifdef USE_PDAF
 ! 	! tau_close = 150
@@ -145,7 +146,8 @@ SUBROUTINE integrate_pdaf()
 		if (spinup_phase .eq. 0) then
 			if (step == spinup_time) then
 				! initial file output for spin-up cases (new sb 9/18/23)
-			  OPEN(11, file = 'outputs/for_elizabeth/v_init', form='unformatted', &
+				init_fstr = trim('outputs/for_elizabeth/v_init')
+			  OPEN(11, file = init_fstr, form='unformatted', &
 			  	access='stream', action='write', status='replace')
 			  ! DO i = 1, nx
 			  ! WRITE (11) v(i, :)
@@ -153,7 +155,8 @@ SUBROUTINE integrate_pdaf()
 			  ! END DO
 			  close(11)
 
-			  OPEN(12, file = 'outputs/for_elizabeth/h_init', form='unformatted', &
+			  init_fstr = trim('outputs/for_elizabeth/h_init')
+			  OPEN(12, file = init_fstr, form='unformatted', &
 			  	access='stream', action='write', status='replace')
 			  ! DO i = 1, nx
 			  ! WRITE (12) h(i, :)

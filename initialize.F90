@@ -116,18 +116,21 @@ SUBROUTINE initialize()
   allocate(v_bin(nx*nx))
   allocate(h_bin(nx*nx))
 
+  init_fstr1 = trim('outputs/for_elizabeth/v_init')
+  init_fstr2 = trim('outputs/for_elizabeth/h_init')
+
 #ifndef USE_PDAF
   if (spinup_phase .eq. 0) then
     v(:,:) = 0
     h(:,:) = 1 * 0.5
   elseif (spinup_phase .eq. 1) then
-    OPEN(11, file='outputs/for_elizabeth/v_init', status='old', form='unformatted', access='stream')
+    OPEN(11, file=init_fstr1, status='old', form='unformatted', access='stream')
     ! DO i = 1, ny
     ! READ (11) v(:,i)
     READ (11) v_bin
     ! END DO
 
-    OPEN(11, file='outputs/for_elizabeth/h_init', status='old', form='unformatted', access='stream')
+    OPEN(11, file=init_fstr2, status='old', form='unformatted', access='stream')
     ! DO i = 1, ny
     ! READ (11) h(:,i)
     READ (11) h_bin
@@ -138,13 +141,13 @@ SUBROUTINE initialize()
 #endif 
 
 #ifdef USE_PDAF
-  OPEN(11, file='outputs/for_elizabeth/v_init', status='old', form='unformatted', access='stream')
+  OPEN(11, file=init_fstr1, status='old', form='unformatted', access='stream')
   ! DO i = 1, ny
   ! READ (11) v(:,i)
   READ (11) v_bin
   ! END DO
 
-  OPEN(11, file='outputs/for_elizabeth/h_init', status='old', form='unformatted', access='stream')
+  OPEN(11, file=init_fstr2, status='old', form='unformatted', access='stream')
   ! DO i = 1, ny
   ! READ (11) h(:,i)
   READ (11) h_bin
