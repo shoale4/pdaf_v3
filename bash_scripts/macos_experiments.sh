@@ -36,11 +36,14 @@ make model_pdaf
 
 ############# EXPERIMENTS #############
 
-# estkf, uniform2
-mpirun -np 4 ./model_pdaf -dim_ens 4 -exp_type obs_spacing_exp -filt_type 4 -filter_type etkf -obs_type uniform2 -fout_choice 1
+# # estkf, uniform2
+# mpirun -np 4 ./model_pdaf -dim_ens 4 -exp_type obs_spacing_exp -filt_type 4 -filter_type etkf -obs_type uniform2 -fout_choice 1
 
-# lestkf, uniform2
-mpirun -np 4 ./model_pdaf -dim_ens 4 -exp_type obs_spacing_exp -filt_type 6 -filter_type estkf -obs_type uniform2 -fout_choice 1
+# # lestkf, uniform2
+# mpirun -np 4 ./model_pdaf -dim_ens 4 -exp_type obs_spacing_exp -filt_type 6 -filter_type estkf -obs_type uniform2 -fout_choice 1
 
-# pf, uniform2
-mpirun -np 4 ./model_pdaf -dim_ens 4 -exp_type obs_spacing_exp -filt_type 12 -filter_type pf -obs_type uniform2 -fout_choice 1
+# # pf, uniform2
+# mpirun -np 4 ./model_pdaf -dim_ens 4 -exp_type obs_spacing_exp -filt_type 12 -filter_type pf -obs_type uniform2 -fout_choice 1
+
+# lestkf
+mpirun -np 4 ./model_pdaf -dim_ens 4 -exp_type obs_spacing_exp -filt_type 7 -filter_type lestkf -obs_type uniform2 -fout_choice 1

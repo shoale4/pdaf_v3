@@ -160,7 +160,7 @@ CONTAINS
 !! Further variables are set when the routine PDAFomi_gather_obs is called.
 !!
   SUBROUTINE init_dim_obs_A(step, dim_obs)
-    use netcdf
+    ! use netcdf
     USE PDAFomi, &
          ONLY: PDAFomi_gather_obs
     USE mod_assimilation, &
@@ -194,7 +194,9 @@ CONTAINS
     integer :: cnt_obs=0, obs_ind
     integer :: dim_state_obs
     character(len=10) :: obs_file
-    character(len=6) :: stepstr
+    character(len=5) :: stepstr
+    character(len=6) :: fo_flag
+    character(len=10) :: fname
 
 
 ! *********************************************
@@ -215,56 +217,75 @@ CONTAINS
     thisobs%ncoord = 2
 
 
+    if (step .lt. 10) then
+        fo_flag = '(I5.1)'
+        ! allocate(filename(len=1))
+    elseif (step .ge. 10 .and. step .lt. 100) then
+        fo_flag = '(I5.2)'
+        ! allocate(filename(2))
+    elseif (step .ge. 100 .and. step .lt. 1000) then
+        fo_flag = '(I5.3)'
+        ! allocate(filename(3))
+    elseif (step .ge. 1000 .and. step .lt. 10000) then
+        fo_flag = '(I5.4)'
+        ! allocate(filename(4))
+    else
+        fo_flag = '(I5.5)'
+        ! allocate(filename(5))
+    endif
+
+
 ! **********************************
 ! *** Read PE-local observations ***
 ! **********************************
     
     if (file_output_choice .eq. 0) then
 
-        obs_file = 'obs.nc'
-        j = 1
-        stat(j) = NF90_OPEN(TRIM(obs_file), NF90_NOWRITE, file_id) 
+        ! obs_file = 'obs.nc'
+        ! j = 1
+        ! stat(j) = NF90_OPEN(TRIM(obs_file), NF90_NOWRITE, file_id) 
       
-        ! read number of time steps
-        j = j + 1
-        stat(j) = NF90_INQ_DIMID(file_id, 'time_steps', step_id)
-        j = j + 1
-        stat(j) = NF90_Inquire_dimension(file_id, step_id, len=nsteps_file)
-        ! read time step info
-        j = j + 1
-        stat(j) = NF90_INQ_VARID(file_id, 'step', step_id)
+        ! ! read number of time steps
+        ! j = j + 1
+        ! stat(j) = NF90_INQ_DIMID(file_id, 'time_steps', step_id)
+        ! j = j + 1
+        ! stat(j) = NF90_Inquire_dimension(file_id, step_id, len=nsteps_file)
+        ! ! read time step info
+        ! j = j + 1
+        ! stat(j) = NF90_INQ_VARID(file_id, 'step', step_id)
       
       
-        ! initialize obs interval
-        delt_obs = 5    ! fine hardcoded for now but needs to be made dynamic (shoale 2/27)
+        ! ! initialize obs interval
+        ! delt_obs = 5    ! fine hardcoded for now but needs to be made dynamic (shoale 2/27)
       
-        ! read observations
-        ! dim_obs = nx*nx
-        dim_state_obs = nx*nx
-        allocate(obs_arr(dim_state_obs))
+        ! ! read observations
+        ! ! dim_obs = nx*nx
+        ! dim_state_obs = nx*nx
+        ! allocate(obs_arr(dim_state_obs))
       
-        j = 1
-        stat(j) = NF90_INQ_VARID(file_id, 'obs', obs_id)
+        ! j = 1
+        ! stat(j) = NF90_INQ_VARID(file_id, 'obs', obs_id)
       
-        pos(2) = int(step / delt_obs)
-        cnt_(2) = 1
-        pos(1) = 1
-        cnt_(1) = dim_state_obs
-        j = j + 1
-        stat(j) = NF90_GET_VAR(file_id, obs_id, obs_arr(:), start=pos, count=cnt_)
-        ! print *, obs_arr
-        if (stat(j) /= NF90_noerr) then
-          write (*,*) "NETCDF ERROR READING OBSERVATIONS, STAT LINE ", j 
-        end if
+        ! pos(2) = int(step / delt_obs)
+        ! cnt_(2) = 1
+        ! pos(1) = 1
+        ! cnt_(1) = dim_state_obs
+        ! j = j + 1
+        ! stat(j) = NF90_GET_VAR(file_id, obs_id, obs_arr(:), start=pos, count=cnt_)
+        ! ! print *, obs_arr
+        ! if (stat(j) /= NF90_noerr) then
+        !   write (*,*) "NETCDF ERROR READING OBSERVATIONS, STAT LINE ", j 
+        ! end if
 
-        j = j + 1
-        stat(j) = NF90_CLOSE(file_id)
+        ! j = j + 1
+        ! stat(j) = NF90_CLOSE(file_id)
 
     else if (file_output_choice .eq. 1) then
 
         allocate(obs_arr(nx*nx))
-        write(stepstr, "(I0)") step
-        call read_txt('obs_'//trim(stepstr), obs_arr(:))
+        write(stepstr, fo_flag) step
+        fname = trim('obs_'//adjustl(stepstr))
+        call read_txt(fname, obs_arr(:))
 
     end if
 
@@ -427,7 +448,8 @@ CONTAINS
 
     ! Include localization radius and local coordinates
     USE mod_assimilation, &   
-         ONLY: coords_l, local_range, locweight, srange
+         ONLY: coords_l, local_range, locweight, srange, &
+         id_lstate_in_pstate
 
     IMPLICIT NONE
 
@@ -436,7 +458,36 @@ CONTAINS
     INTEGER, INTENT(in)  :: step         !< Current time step
     INTEGER, INTENT(in)  :: dim_obs      !< Full dimension of observation vector
     INTEGER, INTENT(inout) :: dim_obs_l  !< Local dimension of observation vector
+    real(8) :: limits_x(2), limits_y(2)
+    integer :: i, cnt
 
+
+    ! ! NEW SB 2/7/24 FOR LOCAL FILTERS
+    ! limits_x(1) = coords_l(1) - local_range
+    ! if (limits_x(1) < 1.0) then
+    !     limits_x(1) = 1.0
+    !     limits_x(2) = coords_l(1) + local_range
+    ! endif
+    ! if (limits_x(2) > 200) then 
+    !     limits_x(2) = 200
+    ! endif
+
+    ! dim_obs_l = 0
+    ! DO i = 1, dim_obs
+    !     IF (coords_l(:,i) .le. local_range) then
+    !         dim_obs_l = dim_obs_l + 1
+    !     END IF
+    ! END DO
+
+    ! allocate (id_lstate_in_pstate(dim_obs_l))
+
+    ! cnt = 0
+    ! do i = 1, dim_obs
+    !     if (coords_l(:,i) .le. local_range) then
+    !         cnt = cnt + 1
+    !         id_lstate_in_pstate(cnt) = i 
+    !     endif 
+    ! end do
 
 ! **********************************************
 ! *** Initialize local observation dimension ***

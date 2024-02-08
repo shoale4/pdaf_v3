@@ -18,7 +18,7 @@ module output_txt
 			! args
 			integer, intent(in) :: dim
 			real(8), intent(in) :: state(dim)
-			character(len=16), intent(in) :: filename
+			character(len=9), intent(in) :: filename
 
 			! local vars
 			integer :: i, j
@@ -28,7 +28,8 @@ module output_txt
 
 
 
-			OPEN (11, file='../txt_file_data/ens_obs/'//trim(filename), form='unformatted',  access='stream', action='write')
+			OPEN (11, file='../txt_file_data/ens_obs/'//trim(adjustl(filename)), form='unformatted', &
+			 access='stream', action='write')
 			! state_p = reshape(state, (/nx, nx/))
 			! do i = 1, nx
 			write (11) state
@@ -43,7 +44,7 @@ module output_txt
 			implicit none
 
 			! args
-			character(len=16), intent(in) :: filename
+			character(len=5), intent(in) :: filename
 
 			! local vars
 			integer :: i, j
@@ -51,7 +52,8 @@ module output_txt
 			real(8), intent(out) :: state_p(200*200)
 
 
-			OPEN (11, file=trim('../txt_file_data/state_step_'//TRIM(filename)), form='unformatted',  access='stream', action='read')
+			OPEN (11, file='../txt_file_data/state_step_'//TRIM(adjustl(filename)), form='unformatted', &
+				access='stream', action='read')
 			! do i = 1, nx
 			READ(11) state_p
 			! end do

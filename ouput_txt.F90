@@ -42,14 +42,14 @@ module ouput_txt
 			implicit none
 
 			! args
-			character(len=16), intent(in) :: filename
+			character(len=10), intent(in) :: filename
 
 			! local vars
 			integer :: i, j
 			real(8), intent(out) :: state_p(200*200)
 
-			print *, 'I/O File Option selected: TXT'
-
+			! print *, 'I/O File Option selected: TXT'
+			print *, trim(filename)
 			OPEN (11, file='txt_file_data/ens_obs/'//TRIM(filename), form='unformatted', &
 					access='stream', action='read')
 			! state_p = reshape(state, (/nx, nx/))

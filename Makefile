@@ -53,8 +53,8 @@ OBJ_MODEL =	main.o \
 # Moduls used for PDAF
 MOD_ASSIM = 	mod_parallel_pdaf.o \
 		mod_assimilation.o \
-		parser_mpi.o \
-		output_netcdf_ass.o
+		parser_mpi.o 
+# 		output_netcdf_ass.o
 
 # Model routines used with PDAF
 OBJ_MODEL_PDAF = main_pdaf.o\

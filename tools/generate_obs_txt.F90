@@ -41,8 +41,25 @@ program generate_obs_txt
 
 		write (*,*) "Writing observations @ time step: ", iter
 
-		! read state vector
-		write(filename, "(I0)") iter
+		! if (iter .lt. 10) then
+		! 	fo_flag = '(I5.1)'
+		! 	! allocate(filename(len=1))
+		! elseif (iter .ge. 10 .and. iter .lt. 100) then
+		! 	fo_flag = '(I5.2)'
+		! 	! allocate(filename(2))
+		! elseif (iter .ge. 100 .and. iter .lt. 1000) then
+		! 	fo_flag = '(I5.3)'
+		! 	! allocate(filename(3))
+		! elseif (iter .ge. 1000 .and. iter .lt. 10000) then
+		! 	fo_flag = '(I5.4)'
+		! 	! allocate(filename(4))
+		! else
+		! 	fo_flag = '(I5.5)'
+		! 	! allocate(filename(5))
+		! endif
+		write(filename, '(I5)') iter
+
+		! read state file at current time step
 		call read_txt(filename, state)
 
 
@@ -107,24 +124,7 @@ program generate_obs_txt
 
 
 		! write observations
-		if (step .lt. 10) then
-			fo_flag = '(I5.1)'
-			! allocate(filename(len=1))
-		elseif (step .ge. 10 .and. step .lt. 100) then
-			fo_flag = '(I5.2)'
-			! allocate(filename(2))
-		elseif (step .ge. 100 .and. step .lt. 1000) then
-			fo_flag = '(I5.3)'
-			! allocate(filename(3))
-		elseif (step .ge. 1000 .and. step .lt. 10000) then
-			fo_flag = '(I5.4)'
-			! allocate(filename(4))
-		else
-			fo_flag = '(I5.5)'
-			! allocate(filename(5))
-		endif
-		write(filename, fo_flag) step
-		call write_txt(nx*nx, reshape(observations, (/nx*nx/)), 'obs_'//TRIM(adjustl(filename)))
+		call write_txt(nx*nx, reshape(observations, (/nx*nx/)), 'obs_'//adjustl(filename))
 
         ! print *, observations
 
